@@ -1,29 +1,56 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './pages/Home';
-import Test from './pages/Test';
+import React, { useState, useEffect } from 'react';
+import { Table, Button } from 'react-bootstrap';
 
-// Définissez le composant Routes en dehors du composant App
-export const Routes = () => {
-  return (
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route> 
-        <Route path="/test">
-          <Test /> 
-        </Route>
-      </Switch>
-    </Router>
-  );
-};
-
-// Le composant App ne doit contenir que le rendu du composant Routes
 function App() {
+  const [factures, setFactures] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/facture')
+      .then(response => response.json())
+      .then(data => setFactures(data))
+      .catch(error => console.error('Error fetching factures:', error));
+  }, []);
+
+  const handleEdit = (facture) => {
+    // Mettez en œuvre la logique pour gérer l'édition de la facture ici
+    console.log('Edition de la facture:', facture);
+  };
+
+  const handleDelete = (factureId) => {
+    // Mettez en œuvre la logique pour gérer la suppression de la facture ici
+    console.log('Suppression de la facture avec ID:', factureId);
+  };
+
   return (
-    <div>
-      <Routes />
+    <div className="App">
+      <h1>Liste des Factures</h1>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>N°</th>
+            <th>Prestataire/Fournisseur</th>
+            <th>Facteur N°</th>
+            <th>Date Facteur</th>
+            {/* Ajoutez ici les autres colonnes du tableau */}
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {factures.map(facture => (
+            <tr key={facture._id}>
+              <td>{facture.N}</td>
+              <td>{facture.prestataire}</td>
+              <td>{facture.facteurNo}</td>
+              <td>{facture.dateFacteur}</td>
+              {/* Ajoutez ici les autres colonnes du tableau */}
+              <td>
+                <Button variant="primary" onClick={() => handleEdit(facture)}>Edit</Button>
+                <Button variant="danger" onClick={() => handleDelete(facture._id)}>Delete</Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 }
